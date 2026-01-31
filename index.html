@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Sayang!</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #ffcccc, #ff9999);
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        h1 {
+            color: #ff3366;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .section {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .puzzle-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 5px;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+            border: 2px solid #ff3366;
+        }
+        .puzzle-piece {
+            width: 100%;
+            height: 100%;
+            background-size: 300px 300px;
+            cursor: grab;
+            border: 1px solid #ccc;
+        }
+        .puzzle-piece.dragging {
+            opacity: 0.5;
+        }
+        .drop-zone {
+            border: 2px dashed #ccc;
+            width: 100%;
+            height: 100%;
+        }
+        button {
+            background: #ff3366;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #cc0044;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .gift {
+            display: none;
+            animation: fadeIn 2s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .message {
+            font-size: 1.5em;
+            line-height: 1.6;
+            margin-top: 20px;
+        }
+        audio {
+            margin-top: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Happy Birthday Sayang! 🎉</h1>
+    
+    <div id="intro-section" class="section">
+        <h2>Selamat Datang di Website Spesialmu!</h2>
+        <p>Ada 2 permainan yang harus kamu selesaikan untuk membuka gift ulang tahun. Siap? Klik mulai!</p>
+        <button onclick="startGame1()">Mulai Permainan 1</button>
+    </div>
+    
+    <div id="game1-section" class="section hidden">
+        <h2>Permainan 1: Susun Puzzle Foto! 🖼️</h2>
+        <p>Susun potongan-potongan foto ini menjadi gambar utuh dengan cara drag-and-drop. Tarik potongan ke tempat yang benar!</p>
+        <div class="puzzle-container" id="puzzle-container">
+            <!-- Potongan puzzle akan di-generate oleh JS -->
+        </div>
+        <p id="puzzle-feedback"></p>
+        <button id="next-to-game2" class="hidden" onclick="startGame2()">Lanjut ke Permainan 2</button>
+    </div>
+    
+    <div id="game2-section" class="section hidden">
+        <h2>Permainan 2: Quiz Spesial! ❓</h2>
+        <p>Jawab 3 pertanyaan ini dengan benar untuk membuka gift!</p>
+        
+        <div class="question">
+            <p>1. Apa warna favorit aku? (Hint: Sesuatu yang romantis)</p>
+            <input type="text" id="q1" placeholder="Jawab di sini...">
+        </div>
+        
+        <div class="question">
+            <p>2. Di mana kita pertama kali bertemu? (Hint: Tempat yang indah)</p>
+            <input type="text" id="q2" placeholder="Jawab di sini...">
+        </div>
+        
+        <div class="question">
+            <p>3. Apa makanan favorit kita berdua? (Hint: Sesuatu yang manis)</p>
+            <input type="text" id="q3" placeholder="Jawab di sini...">
+        </div>
+        
+        <button onclick="checkQuiz()">Cek Jawaban!</button>
+        <p id="quiz-feedback"></p>
+    </div>
+    
+    <div id="gift-section" class="gift">
+        <h2>Yay! Kamu Berhasil! 🎁</h2>
+        <div class="message">
+            "haii sayangg, maaf ya aku belum bisa ngasih yang terbaik buat sayangg, aku cumaa bisaa ngasii hal hal sederhana ke sayangg, happy birthday yang ke 20 ya sayangg, pasti ini ultah yang spesial bagii sayangg, wish you all the best sayangg"
+        </div>
+        <p>Love you more than anything! 💖</p>
+        <!-- Opsional: Tambahkan musik latar (ganti src dengan file audio Anda) -->
+        <audio controls autoplay loop>
+            <source src="path/to/your/birthday-song.mp3" type="audio/mpeg">
+            Browser Anda tidak mendukung audio.
+        </audio>
+    </div>
+
+    <script>
+        // Fungsi untuk memulai Permainan 1
+        function startGame1() {
+            document.getElementById('intro-section').classList.add('hidden');
+            document.getElementById('game1-section').classList.remove('hidden');
+            generatePuzzle();
+        }
+        
+        // Generate puzzle 3x3
+        function generatePuzzle() {
+            const container = document.getElementById('puzzle-container');
+            container.innerHTML = '';
+            const pieces = [];
+            for (let i = 0; i < 9; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'puzzle-piece';
+                piece.draggable = true;
+                piece.style.backgroundImage = "url('https://via.placeholder.com/300x300/ff3366/ffffff?text=Love+You')"; // Ganti dengan URL foto Anda
+                piece.style.backgroundPosition = `-${(i % 3) * 100}px -${Math.floor(i / 3) * 100}px`;
+                piece.dataset.correctPos = i;
+                piece.addEventListener('dragstart', dragStart);
+                piece.addEventListener('dragend', dragEnd);
+                pieces.push(piece);
+            }
+            // Acak posisi
+            pieces.sort(() => Math.random() - 0.5);
+            pieces.forEach(piece => container.appendChild(piece));
+            
+            // Tambahkan drop zones
+            for (let i = 0; i < 9; i++) {
+                const zone = document.createElement('div');
+                zone.className = 'drop-zone';
+                zone.dataset.pos = i;
+                zone.addEventListener('dragover', dragOver);
+                zone.addEventListener('drop', drop);
+                container.appendChild(zone);
+            }
+        }
+        
+        let draggedElement = null;
+        
+        function dragStart(e) {
+            draggedElement = e.target;
+            e.target.classList.add('dragging');
+        }
+        
+        function dragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+        
+        function dragOver(e) {
+            e.preventDefault();
+        }
+        
+        function drop(e) {
+            e.preventDefault();
+            if (draggedElement && e.target.classList.contains('drop-zone')) {
+                const pos = e.target.dataset.pos;
+                const correctPos = draggedElement.dataset.correctPos;
+                if (pos == correctPos) {
+                    e.target.appendChild(draggedElement);
+                    e.target.classList.remove('drop-zone');
+                    checkPuzzleComplete();
+                } else {
+                    document.getElementById('puzzle-feedback').textContent = 'Posisi salah! Coba lagi.';
+                }
+            }
+        }
+        
+        function checkPuzzleComplete() {
+            const zones = document.querySelectorAll('.drop-zone');
+            if (zones.length === 0) {
+                document.getElementById('puzzle-feedback').textContent = 'Puzzle selesai! Bagus banget!';
+                document.getElementById('next-to-game2').classList.remove('hidden');
+            }
+        }
+        
+        // Fungsi untuk memulai Permainan 2
+        function startGame2() {
+            document.getElementById('game1-section').classList.add('hidden');
+            document.getElementById('game2-section').classList.remove('hidden');
+        }
+        
+        // Fungsi untuk cek quiz
+        function checkQuiz() {
+            const q1 = document.getElementById('q1').value.toLowerCase().trim();
+            const q2 = document.getElementById('q2').value.toLowerCase().trim();
+            const q3 = document.getElementById('q3').value.toLowerCase().trim();
+            const feedback = document.getElementById('quiz-feedback');
+            
+            // Jawaban contoh (ganti sesuai hubungan kalian)
+            const answers = {
+                q1: 'merah muda',
+                q2: 'pantai',
+                q3: 'coklat'
+            };
+            
+            if (q1 === answers.q1 && q2 === answers.q2 && q3 === answers.q3) {
+                document.getElementById('game2-section').style.display = 'none';
+                document.getElementById('gift-section').style.display = 'block';
+                feedback.textContent = '';
+            } else {
+                feedback.textContent = 'Hmm, ada yang salah nih. Coba lagi ya, sayang! 😊';
+                feedback.style.color = 'red';
+            }
+        }
+    </script>
+</body>
+</html>
